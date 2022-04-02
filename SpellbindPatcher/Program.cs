@@ -29,23 +29,25 @@ namespace SpellbindPatcher
         public static async Task<int> Main(string[] args)
         {
             return await SynthesisPipeline.Instance
+                // Add the runnability check via the pipeline builder
+                .AddRunnabilityCheck(CheckRunnability)
                 .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
                 .SetTypicalOpen(GameRelease.SkyrimSE, "YourPatcher.esp")
                 .Run(args);
         }
 
+        public static void CheckRunnability(IRunnabilityState state)
+        {
+            state.LoadOrder.AssertHasMod("Spellbind.esp");
+        }
+
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            if (!state.LoadOrder.PriorityOrder.HasMod(SpellbindMod))
-            {
-                throw new Exception("Missing Spellbind mod");
-            }
-
-            if (SoulGemShard == null)
+            if (!SoulGemShard.TryResolve(state.LinkCache, out _))
             {
                 throw new Exception("Could not find required ingredient records");
             }
-
+            
             foreach (var book in state.LoadOrder.PriorityOrder.Book().WinningOverrides())
             {
                 if (book.Teaches is not IBookSpellGetter spellBookGetter) continue;
@@ -90,9 +92,10 @@ namespace SpellbindPatcher
                     shardCost);
 
                 // Construct and add recipe.
+                var spellName = taughtSpell.Name?.ToString() ?? "";
                 ConstructibleObject scrollRecipe = new(
                     state.PatchMod, 
-                    "GN_CraftScrollRecipe_" + Regex.Replace(taughtSpell.Name!.ToString()!, @"[^A-z0-9_]+", ""))
+                    "GN_CraftScroll_" + Regex.Replace( $"{spellName}{taughtSpell.FormKey}", @"[^A-z0-9_]+", ""))
                 {
                     CreatedObject = new FormLinkNullable<IConstructibleGetter>(matchingScroll),
                     WorkbenchKeyword = new FormLinkNullable<IKeywordGetter>(ScrollCraftStationKey),
