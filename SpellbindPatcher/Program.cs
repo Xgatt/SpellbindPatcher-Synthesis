@@ -16,9 +16,7 @@ namespace SpellbindPatcher
     {
         private static readonly ModKey SpellbindMod = ModKey.FromNameAndExtension("Spellbind.esp");
         private static readonly FormLink<IMiscItemGetter> SoulGemShard = new FormLink<IMiscItemGetter>(new FormKey(SpellbindMod, 0x14ca1));
-
         private static readonly FormKey ScrollCraftStationKey = new FormKey(SpellbindMod, 0x0fb2e);
-
         private static readonly Dictionary<uint, int> ShardCosts = new()
         {
             {0, 1},
