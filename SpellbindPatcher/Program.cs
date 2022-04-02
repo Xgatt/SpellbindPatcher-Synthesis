@@ -71,7 +71,7 @@ namespace SpellbindPatcher
                     .ToHashSet();
 
                 var matchingScroll = state.LoadOrder.PriorityOrder.Scroll().WinningOverrides()
-                    .FirstOrDefault(scroll => scroll.Effects.All(
+                    .FirstOrDefault(scroll => spellEffects.Count == scroll.Effects.Count && scroll.Effects.All(
                         eff => spellEffects.Contains(eff.BaseEffect)
                                && eff.BaseEffect.TryResolve(state.LinkCache, out _)));
 
