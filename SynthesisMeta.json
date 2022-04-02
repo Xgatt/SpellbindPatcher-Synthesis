@@ -1,0 +1,8 @@
+{
+  "Nickname": "SpellBindPatcher",
+  "Visibility": "Visible",
+  "OneLineDescription": "Creates Spell Bind scroll crafting recipes for all spells in the game learnable from spell tomes",
+  "LongDescription": "",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": ["Spell Bind"]
+}
